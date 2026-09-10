@@ -7,9 +7,9 @@
     "start": "node server/server.js",
     "server": "npm run dev --prefix server",
     "client": "npm run dev --prefix client",
-    "build": "npm install --include=dev --prefix client && npm run build --prefix client && npm install --include=dev --prefix server",
+    "build": "cd client && npm install --include=dev && npm run build && cd ../server && npm install",
     "seed": "node server/seed/seed.js",
-    "postinstall": "npm install --include=dev --prefix server && npm install --include=dev --prefix client"
+    "postinstall": "cd server && npm install && cd ../client && npm install"
   },
   "keywords": ["grocery", "ecommerce", "react", "express", "mongodb", "grocmart"],
   "author": "GrocMart Team",
