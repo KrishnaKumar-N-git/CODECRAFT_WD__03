@@ -16,8 +16,11 @@ const img = (seed, w = 600, h = 600) => `https://picsum.photos/seed/${encodeURIC
 
 const seedData = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/apk_grocery_db');
-    console.log('✓ Connected to MongoDB for seeding...');
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/apk_grocery_db');
+      console.log('✓ Connected to MongoDB for seeding...');
+    }
+
 
     // Clear existing data
     await User.deleteMany({});
