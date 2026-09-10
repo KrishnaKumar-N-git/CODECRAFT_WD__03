@@ -1,0 +1,17 @@
+{
+  "name": "grocmart-grocery-app",
+  "version": "1.0.0",
+  "description": "Full-stack single store grocery web application built with React, Node.js, Express & MongoDB",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "build": "npm install --prefix client && npm run build --prefix client && npm install --prefix server",
+    "seed": "node server/seed/seed.js",
+    "postinstall": "npm install --prefix server && npm install --prefix client"
+  },
+  "keywords": ["grocery", "ecommerce", "react", "express", "mongodb", "grocmart"],
+  "author": "GrocMart Team",
+  "license": "ISC"
+}
