@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
+const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
+
 export const ProductGallery = ({ images = [] }) => {
-  const imageList = images.length > 0 ? images : [{ url: 'https://picsum.photos/600/600' }];
-  const [selectedImage, setSelectedImage] = useState(imageList[0]?.url || imageList[0]);
+  const imageList = images.length > 0 ? images : [{ url: DEFAULT_FALLBACK_IMAGE }];
+  const [selectedImage, setSelectedImage] = useState(imageList[0]?.url || imageList[0] || DEFAULT_FALLBACK_IMAGE);
 
   return (
     <div className="space-y-4">
@@ -11,6 +13,10 @@ export const ProductGallery = ({ images = [] }) => {
         <img
           src={selectedImage}
           alt="Product detail"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = DEFAULT_FALLBACK_IMAGE;
+          }}
           className="w-full h-full object-contain max-h-[420px] transition-transform duration-300 group-hover:scale-105"
         />
       </div>
@@ -28,12 +34,21 @@ export const ProductGallery = ({ images = [] }) => {
                   selectedImage === imgUrl ? 'border-brand-600 shadow-sm scale-105' : 'border-gray-200 opacity-70 hover:opacity-100'
                 }`}
               >
-                <img src={imgUrl} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+                <img
+                  src={imgUrl}
+                  alt={`Thumbnail ${idx}`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = DEFAULT_FALLBACK_IMAGE;
+                  }}
+                  className="w-full h-full object-cover"
+                />
               </button>
             );
           })}
         </div>
       )}
+
     </div>
   );
 };

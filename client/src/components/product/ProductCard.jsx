@@ -9,7 +9,8 @@ export const ProductCard = ({ product }) => {
   const { cart, addToCart, updateQty } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const primaryImage = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || 'https://picsum.photos/400/400';
+  const DEFAULT_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
+  const primaryImage = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || DEFAULT_PRODUCT_IMAGE;
   const isWishlisted = isInWishlist(product._id);
 
   const cartItem = cart?.items?.find((item) => item.product?._id === product._id);
@@ -48,9 +49,14 @@ export const ProductCard = ({ product }) => {
         <img
           src={primaryImage}
           alt={product.name}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = DEFAULT_PRODUCT_IMAGE;
+          }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
+
         {isOutOfStock && (
           <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
             <span className="bg-red-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider">

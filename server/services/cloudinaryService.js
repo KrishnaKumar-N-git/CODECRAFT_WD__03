@@ -6,10 +6,11 @@ const uploadToCloudinary = (fileBuffer, folder = 'apk_grocery') => {
     if (!process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME === 'demo_cloud') {
       const mockId = `mock_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
       return resolve({
-        url: `https://picsum.photos/seed/${mockId}/600/600`,
+        url: `https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop`,
         publicId: mockId
       });
     }
+
 
     const uploadStream = cloudinary.uploader.upload_stream(
       {

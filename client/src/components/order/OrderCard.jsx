@@ -43,10 +43,15 @@ export const OrderCard = ({ order, onCancel }) => {
         {order.items?.map((item, idx) => (
           <div key={idx} className="relative group shrink-0">
             <img
-              src={item.image || 'https://picsum.photos/100/100'}
+              src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop'}
               alt={item.name}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
+              }}
               className="w-14 h-14 object-cover rounded-xl bg-gray-50 border border-gray-100"
             />
+
             <span className="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
               {item.quantity}
             </span>

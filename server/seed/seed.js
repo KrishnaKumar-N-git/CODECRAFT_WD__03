@@ -12,7 +12,7 @@ const Wishlist = require('../models/Wishlist');
 const Address = require('../models/Address');
 const Cart = require('../models/Cart');
 
-const img = (seed, w = 600, h = 600) => `https://picsum.photos/seed/${encodeURIComponent(seed)}/${w}/${h}`;
+const img = (seed, w = 600, h = 600) => `https://images.unsplash.com/photo-1542838132-92c53300491e?w=${w}&auto=format&fit=crop`;
 
 const seedData = async () => {
   try {

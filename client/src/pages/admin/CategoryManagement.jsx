@@ -117,10 +117,15 @@ export const CategoryManagement = () => {
             <div key={cat._id} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <img
-                  src={cat.image?.url || 'https://picsum.photos/100/100'}
+                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=100&auto=format&fit=crop'}
                   alt={cat.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=100&auto=format&fit=crop';
+                  }}
                   className="w-12 h-12 rounded-2xl object-cover border border-gray-100"
                 />
+
                 <div>
                   <h4 className="font-bold text-gray-900 text-xs">{cat.name}</h4>
                   <p className="text-[10px] text-gray-400 line-clamp-1">{cat.description || 'Grocery category'}</p>

@@ -222,8 +222,13 @@ export const ProductManagement = () => {
                       <img
                         src={product.images?.[0]?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
                         alt={product.name}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100';
+                        }}
                         className="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0"
                       />
+
                       <div>
                         <h4 className="font-bold text-gray-900">{product.name}</h4>
                         <p className="text-[10px] text-gray-400">{product.brand} • {product.weight}</p>

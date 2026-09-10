@@ -175,10 +175,15 @@ export const Home = () => {
             >
               <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 p-1 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={cat.image?.url || `https://picsum.photos/seed/cat-${cat.slug}/200/200`}
+                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
                   alt={cat.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop';
+                  }}
                   className="w-full h-full object-cover rounded-xl"
                 />
+
               </div>
               <p className="text-[11px] font-bold text-gray-800 line-clamp-1 group-hover:text-emerald-700">
                 {cat.name}

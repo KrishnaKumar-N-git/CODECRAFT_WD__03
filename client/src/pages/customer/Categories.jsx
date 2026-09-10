@@ -49,10 +49,15 @@ export const Categories = () => {
             >
               <div className="w-20 h-20 mx-auto rounded-2xl bg-brand-50 p-2 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={cat.image?.url || `https://picsum.photos/seed/cat-${cat.slug}/200/200`}
+                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
                   alt={cat.name}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop';
+                  }}
                   className="w-full h-full object-cover rounded-xl"
                 />
+
               </div>
               <div>
                 <h3 className="text-xs font-black text-gray-900 group-hover:text-brand-600 transition-colors">
