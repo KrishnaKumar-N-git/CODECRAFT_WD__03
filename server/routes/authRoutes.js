@@ -9,7 +9,8 @@ const {
   forgotPassword,
   verifyOTP,
   resetPassword,
-  getMe
+  getMe,
+  seedDatabase
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -27,5 +28,8 @@ router.post('/forgot-password', authLimiter, forgotPassword);
 router.post('/verify-otp', authLimiter, verifyOTP);
 router.post('/reset-password', authLimiter, resetPassword);
 router.get('/me', protect, getMe);
+router.post('/seed-database', seedDatabase);
+router.get('/seed-database', seedDatabase);
 
 module.exports = router;
+

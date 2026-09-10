@@ -1,10 +1,24 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
+const Product = require('../models/Product');
+const seedData = require('../seed/seed');
 
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/apk_grocery_db');
     console.log(`✓ MongoDB Connected: ${conn.connection.host}`);
+
+    // Auto-seed full database with grocery products & images if product catalog is empty
+    try {
+      const productCount = await Product.countDocuments();
+      if (productCount === 0) {
+        console.log('🌱 Product catalog is empty. Seeding database with grocery items and Unsplash images...');
+        await seedData();
+        console.log('✓ Database auto-seeded successfully!');
+      }
+    } catch (catalogErr) {
+      console.error('⚠️ Product auto-seed check error:', catalogErr.message);
+    }
 
     // Auto-ensure Super Admin account (kumar@gmail.com / Kj1110;l)
     try {
@@ -61,5 +75,6 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+
 
 

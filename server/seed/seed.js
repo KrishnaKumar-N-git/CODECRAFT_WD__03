@@ -528,11 +528,22 @@ for (const cat of categorySeeds) {
     console.log('  🛒 Customer:     customer@apkgrocery.demo / Customer@123');
     console.log('======================================================\n');
 
-    process.exit(0);
+    if (require.main === module) {
+      process.exit(0);
+    }
+    return { success: true, message: 'Database seeded successfully' };
   } catch (error) {
     console.error('❌ Seeding Error:', error);
-    process.exit(1);
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw error;
   }
 };
 
-seedData();
+if (require.main === module) {
+  seedData();
+}
+
+module.exports = seedData;
+

@@ -299,6 +299,19 @@ const getMe = async (req, res) => {
   }
 };
 
+// @desc    Seed database with realistic grocery products & images
+// @route   POST /api/auth/seed-database
+// @access  Public
+const seedDatabase = async (req, res) => {
+  try {
+    const seedData = require('../seed/seed');
+    await seedData();
+    return sendSuccess(res, 200, 'Database seeded successfully with valid grocery products, stores, categories & images!');
+  } catch (error) {
+    return sendError(res, 500, error.message);
+  }
+};
+
 module.exports = {
   register,
   registerAdmin,
@@ -307,5 +320,7 @@ module.exports = {
   forgotPassword,
   verifyOTP,
   resetPassword,
-  getMe
+  getMe,
+  seedDatabase
 };
+
