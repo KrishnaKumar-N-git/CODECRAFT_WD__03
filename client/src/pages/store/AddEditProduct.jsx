@@ -225,55 +225,37 @@ export const AddEditProduct = () => {
           </div>
 
           <div className="space-y-2 col-span-1 sm:col-span-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-gray-700">Product Photo</label>
-              <span className="text-[10px] text-emerald-700 font-bold">Auto-generates icon if left empty</span>
-            </div>
+            <label className="text-xs font-bold text-gray-700 block">Product Photo</label>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-              {/* Direct File Picker Button */}
-              <label className="flex items-center justify-center space-x-2 p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-dashed border-emerald-300 rounded-xl cursor-pointer font-bold text-xs transition-colors">
-                <Upload className="w-4 h-4 text-emerald-600" />
-                <span>Upload Photo from Device</span>
-                <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-              </label>
+            <label className="flex items-center justify-center space-x-2 p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-dashed border-emerald-300 rounded-2xl cursor-pointer font-bold text-xs transition-colors shadow-sm">
+              <Upload className="w-5 h-5 text-emerald-600" />
+              <span>Upload Photo from Device</span>
+              <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+            </label>
 
-              {/* Or Web Link Input */}
-              <input
-                type="url"
-                placeholder="Or paste web image link (.jpg/.png)..."
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              />
-            </div>
-
-            {/* Live Image Preview */}
-            <div className="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-xl border border-gray-200">
-              <img
-                src={formData.imageUrl || getProductSvg(formData.name || 'Grocery Product')}
-                alt="Product Preview"
-                className="w-14 h-14 object-cover rounded-lg border border-gray-200 bg-white"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = getProductSvg(formData.name || 'Grocery Product');
-                }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">
-                  {formData.imageUrl ? (formData.imageUrl.startsWith('data:') ? 'Photo loaded from device' : 'Web Image Link') : 'Auto-generated GrocMart graphic'}
-                </p>
-                {formData.imageUrl && (
+            {formData.imageUrl ? (
+              <div className="flex items-center space-x-3 p-2.5 bg-emerald-50 rounded-2xl border border-emerald-200">
+                <img
+                  src={formData.imageUrl}
+                  alt="Uploaded Preview"
+                  className="w-14 h-14 object-cover rounded-xl border border-emerald-300 bg-white shadow-sm"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-emerald-900">Custom Photo Uploaded ✓</p>
                   <button
                     type="button"
                     onClick={() => setFormData({ ...formData, imageUrl: '' })}
                     className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
                   >
-                    <X className="w-3 h-3" /> Clear Custom Photo
+                    <X className="w-3.5 h-3.5" /> Remove Custom Photo
                   </button>
-                )}
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="text-[10px] text-gray-500 font-medium italic">
+                If no photo is uploaded, GrocMart automatically generates a beautiful graphic for this item.
+              </p>
+            )}
           </div>
         </div>
 

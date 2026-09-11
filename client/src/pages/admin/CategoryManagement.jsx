@@ -113,46 +113,38 @@ export const CategoryManagement = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-              <label className="flex items-center justify-center space-x-2 p-3 bg-purple-50 hover:bg-purple-100 text-purple-800 border-2 border-dashed border-purple-300 rounded-xl cursor-pointer font-bold text-xs transition-colors">
-                <Upload className="w-4 h-4 text-purple-600" />
-                <span>Upload Photo from Device</span>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-gray-700 block">Category Photo</label>
+
+              <label className="flex items-center justify-center space-x-2 p-3 bg-purple-50 hover:bg-purple-100 text-purple-800 border-2 border-dashed border-purple-300 rounded-2xl cursor-pointer font-bold text-xs transition-colors shadow-sm">
+                <Upload className="w-5 h-5 text-purple-600" />
+                <span>Upload Category Photo from Device</span>
                 <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
               </label>
 
-              <input
-                type="url"
-                placeholder="Or paste web image link..."
-                value={newCat.imageUrl}
-                onChange={(e) => setNewCat({ ...newCat, imageUrl: e.target.value })}
-                className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div className="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-xl border border-gray-200">
-              <img
-                src={(newCat.imageUrl && typeof newCat.imageUrl === 'string' && !newCat.imageUrl.includes('unsplash.com') && !newCat.imageUrl.includes('via.placeholder')) ? newCat.imageUrl : getCategorySvg(newCat.name || 'Category')}
-                alt="Category Preview"
-                className="w-12 h-12 rounded-lg object-cover border border-gray-200 bg-white"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = getCategorySvg(newCat.name || 'Category');
-                }}
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">
-                  {newCat.imageUrl ? (newCat.imageUrl.startsWith('data:') ? 'Photo loaded from device' : 'Web Image Link') : 'Auto-generated GrocMart graphic'}
+              {newCat.imageUrl ? (
+                <div className="flex items-center space-x-3 p-2.5 bg-purple-50 rounded-2xl border border-purple-200">
+                  <img
+                    src={newCat.imageUrl}
+                    alt="Category Preview"
+                    className="w-14 h-14 object-cover rounded-xl border border-purple-300 bg-white shadow-sm"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-purple-900">Category Photo Uploaded ✓</p>
+                    <button
+                      type="button"
+                      onClick={() => setNewCat({ ...newCat, imageUrl: '' })}
+                      className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
+                    >
+                      <X className="w-3.5 h-3.5" /> Remove Custom Photo
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[10px] text-gray-500 font-medium italic">
+                  If no photo is uploaded, GrocMart automatically generates a category icon.
                 </p>
-                {newCat.imageUrl && (
-                  <button
-                    type="button"
-                    onClick={() => setNewCat({ ...newCat, imageUrl: '' })}
-                    className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
-                  >
-                    <X className="w-3 h-3" /> Clear Custom Photo
-                  </button>
-                )}
-              </div>
+              )}
             </div>
           </div>
 
