@@ -5,6 +5,7 @@ import api from '../../services/api';
 import { ArrowLeft, Save, Package, Image as ImageIcon, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getProductSvg } from '../../utils/grocerySvgLibrary';
+import { compressImageFile } from '../../utils/imageCompressor';
 
 export const AddEditProduct = () => {
   const { id } = useParams();
@@ -63,22 +64,20 @@ export const AddEditProduct = () => {
     }
   }, [id, isEdit]);
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB');
-      return;
+    const loadingToast = toast.loading('Optimizing photo from device...');
+    try {
+      const compressedBase64 = await compressImageFile(file);
+      setFormData((prev) => ({ ...prev, imageUrl: compressedBase64 }));
+      toast.dismiss(loadingToast);
+      toast.success('Photo uploaded & optimized!');
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error('Failed to read photo');
     }
-
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64Url = uploadEvent.target.result;
-      setFormData((prev) => ({ ...prev, imageUrl: base64Url }));
-      toast.success('Photo loaded from your device!');
-    };
-    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {

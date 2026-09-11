@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { Layers, Plus, Trash2, Edit3, Image as ImageIcon, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCategorySvg } from '../../utils/grocerySvgLibrary';
+import { compressImageFile } from '../../utils/imageCompressor';
 
 export const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -10,22 +11,20 @@ export const CategoryManagement = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCat, setNewCat] = useState({ name: '', description: '', imageUrl: '' });
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB');
-      return;
+    const loadingToast = toast.loading('Optimizing photo from device...');
+    try {
+      const compressedBase64 = await compressImageFile(file);
+      setNewCat((prev) => ({ ...prev, imageUrl: compressedBase64 }));
+      toast.dismiss(loadingToast);
+      toast.success('Category photo uploaded & optimized!');
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error('Failed to read category photo');
     }
-
-    const reader = new FileReader();
-    reader.onload = (uploadEvent) => {
-      const base64Url = uploadEvent.target.result;
-      setNewCat((prev) => ({ ...prev, imageUrl: base64Url }));
-      toast.success('Category photo loaded from device!');
-    };
-    reader.readAsDataURL(file);
   };
 
   const fetchCategories = async () => {
