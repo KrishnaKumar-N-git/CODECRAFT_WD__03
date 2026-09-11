@@ -7,13 +7,15 @@ const {
   updateProduct,
   deleteProduct,
   uploadProductImages,
-  deleteProductImage
+  deleteProductImage,
+  fixProductImages
 } = require('../controllers/productController');
 const { protect } = require('../middleware/authMiddleware');
 const { requireRole } = require('../middleware/roleMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 router.get('/', getProducts);
+router.post('/fix-images', fixProductImages);
 router.get('/:id', getProductById);
 
 router.post('/', protect, requireRole('STORE_OWNER', 'ADMIN'), createProduct);

@@ -108,6 +108,7 @@ export const Home = () => {
           <img
             src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop"
             alt="GrocMart Grocery Essentials"
+            referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
         </div>
@@ -175,8 +176,9 @@ export const Home = () => {
             >
               <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 p-1 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
+                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
                   alt={cat.name}
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop';

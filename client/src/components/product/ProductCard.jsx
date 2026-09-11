@@ -10,7 +10,11 @@ export const ProductCard = ({ product }) => {
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const DEFAULT_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
-  const primaryImage = product.images?.find((img) => img.isPrimary)?.url || product.images?.[0]?.url || DEFAULT_PRODUCT_IMAGE;
+  const getImageUrl = (img) => (typeof img === 'string' ? img : img?.url);
+  const primaryImage =
+    getImageUrl(product.images?.find((img) => img?.isPrimary)) ||
+    getImageUrl(product.images?.[0]) ||
+    DEFAULT_PRODUCT_IMAGE;
   const isWishlisted = isInWishlist(product._id);
 
   const cartItem = cart?.items?.find((item) => item.product?._id === product._id);
@@ -49,6 +53,7 @@ export const ProductCard = ({ product }) => {
         <img
           src={primaryImage}
           alt={product.name}
+          referrerPolicy="no-referrer"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = DEFAULT_PRODUCT_IMAGE;

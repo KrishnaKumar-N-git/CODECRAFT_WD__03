@@ -362,6 +362,19 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
+// @desc    Fix & repair missing/broken product images catalog wide
+// @route   POST /api/products/fix-images
+// @access  Public / Admin
+const fixProductImages = async (req, res) => {
+  try {
+    const { repairProductImages } = require('../utils/imageRepair');
+    const result = await repairProductImages();
+    return sendSuccess(res, 200, `Successfully processed product image repairs. Updated ${result.count || 0} products.`, result);
+  } catch (error) {
+    return sendError(res, 500, error.message);
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
@@ -369,5 +382,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   uploadProductImages,
-  deleteProductImage
+  deleteProductImage,
+  fixProductImages
 };

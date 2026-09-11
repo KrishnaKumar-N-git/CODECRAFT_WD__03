@@ -107,8 +107,13 @@ export const StoreProducts = () => {
                     <td className="p-4">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={product.images?.[0]?.url || 'https://picsum.photos/100/100'}
+                          src={(typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop'}
                           alt={product.name}
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
+                          }}
                           className="w-12 h-12 rounded-xl object-cover border border-gray-200"
                         />
                         <div>

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const seedData = require('../seed/seed');
+const { repairProductImages } = require('../utils/imageRepair');
 
 const connectDB = async () => {
   try {
@@ -15,9 +16,12 @@ const connectDB = async () => {
         console.log('🌱 Product catalog is empty. Seeding database with grocery items and Unsplash images...');
         await seedData();
         console.log('✓ Database auto-seeded successfully!');
+      } else {
+        // Auto-repair broken/missing product images for hosted database
+        await repairProductImages();
       }
     } catch (catalogErr) {
-      console.error('⚠️ Product auto-seed check error:', catalogErr.message);
+      console.error('⚠️ Product auto-seed/repair check error:', catalogErr.message);
     }
 
     // Auto-ensure Super Admin account (kumar@gmail.com / Kj1110;l)

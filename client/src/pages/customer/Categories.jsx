@@ -49,8 +49,9 @@ export const Categories = () => {
             >
               <div className="w-20 h-20 mx-auto rounded-2xl bg-brand-50 p-2 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
+                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
                   alt={cat.name}
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop';

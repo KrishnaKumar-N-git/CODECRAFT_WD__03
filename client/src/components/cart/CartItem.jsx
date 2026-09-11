@@ -8,7 +8,8 @@ export const CartItem = ({ item }) => {
   const { updateQty, removeFromCart } = useCart();
   const product = item.product || {};
   const DEFAULT_CART_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&auto=format&fit=crop';
-  const image = product.images?.[0]?.url || DEFAULT_CART_IMAGE;
+  const getImg = (imgObj) => (typeof imgObj === 'string' ? imgObj : imgObj?.url);
+  const image = getImg(product.images?.[0]) || item.image || DEFAULT_CART_IMAGE;
 
   return (
     <div className="flex items-center space-x-4 py-4 border-b border-gray-100 last:border-0">
@@ -16,6 +17,7 @@ export const CartItem = ({ item }) => {
       <img
         src={image}
         alt={product.name}
+        referrerPolicy="no-referrer"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = DEFAULT_CART_IMAGE;

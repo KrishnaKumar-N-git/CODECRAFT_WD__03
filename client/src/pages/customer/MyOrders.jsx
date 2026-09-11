@@ -158,7 +158,18 @@ export const MyOrders = () => {
                 <div className="flex items-center space-x-3 overflow-x-auto py-1">
                   {order.items?.map((item, idx) => (
                     <div key={idx} className="flex items-center space-x-2 shrink-0 bg-gray-50 p-2 rounded-xl border border-gray-100">
-                      {item.image && <img src={item.image} alt={item.name} className="w-8 h-8 rounded-lg object-cover" />}
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
+                          }}
+                          className="w-8 h-8 rounded-lg object-cover"
+                        />
+                      )}
                       <div>
                         <p className="font-bold text-gray-900 truncate max-w-[130px]">{item.name}</p>
                         <p className="text-[10px] text-gray-500">Qty: {item.quantity}</p>

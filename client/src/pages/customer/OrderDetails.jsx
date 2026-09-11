@@ -161,7 +161,16 @@ export const OrderDetails = () => {
               <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-gray-50/70 border border-gray-100">
                 <div className="flex items-center space-x-3">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover border border-gray-200" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
+                      }}
+                      className="w-12 h-12 rounded-xl object-cover border border-gray-200"
+                    />
                   ) : (
                     <Package className="w-10 h-10 text-gray-400" />
                   )}

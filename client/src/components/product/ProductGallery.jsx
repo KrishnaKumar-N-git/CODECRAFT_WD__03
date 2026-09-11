@@ -13,6 +13,7 @@ export const ProductGallery = ({ images = [] }) => {
         <img
           src={selectedImage}
           alt="Product detail"
+          referrerPolicy="no-referrer"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = DEFAULT_FALLBACK_IMAGE;
@@ -37,6 +38,7 @@ export const ProductGallery = ({ images = [] }) => {
                 <img
                   src={imgUrl}
                   alt={`Thumbnail ${idx}`}
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = DEFAULT_FALLBACK_IMAGE;
