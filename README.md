@@ -7,7 +7,10 @@ APK Grocery Stores allows customers to browse grocery products, add products to 
 The project also includes an **Admin Dashboard** where store owners can manage products, orders, users, payments, and sales information.
 
 ---
-
+# Admin page link 
+   link : https://codecraft-wd-03.onrender.com/admin-secret-access 
+   email : kumar@gmail.com
+   password : Kj1110;l 
 ## 🚀 Main Features
 
 ### 👤 Customer Features
