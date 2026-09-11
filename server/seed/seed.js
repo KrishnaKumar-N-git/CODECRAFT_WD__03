@@ -158,6 +158,7 @@ const seedData = async () => {
     console.log('✓ Created 2 Stores');
 
 const { categoryImages, productImageMap, getRelevantImage } = require('../utils/imageRepair');
+const { getCategorySvg } = require('../utils/grocerySvgLibrary');
 
 const getProductPhoto = (productName, categoryName) => {
   return getRelevantImage(productName, categoryName);
@@ -184,7 +185,7 @@ const categorySeeds = [
 const categoryDocs = [];
 for (const cat of categorySeeds) {
   const slug = cat.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  const catImage = categoryImages[cat.name] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
+  const catImage = getCategorySvg(cat.name);
   const doc = await Category.create({
     name: cat.name,
     slug,
