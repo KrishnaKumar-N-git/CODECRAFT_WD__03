@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
-const DEFAULT_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
+export const ProductGallery = ({ images = [], productName = '', categoryName = '' }) => {
+  const fallbackSvg = getProductSvg(productName, categoryName);
+  const getImgUrl = (img) => (typeof img === 'string' ? img : img?.url);
+  const validImages = images
+    .map(getImgUrl)
+    .filter((url) => url && !url.includes('unsplash.com'));
 
-export const ProductGallery = ({ images = [] }) => {
-  const imageList = images.length > 0 ? images : [{ url: DEFAULT_FALLBACK_IMAGE }];
-  const [selectedImage, setSelectedImage] = useState(imageList[0]?.url || imageList[0] || DEFAULT_FALLBACK_IMAGE);
+  const finalImageList = validImages.length > 0 ? validImages : [fallbackSvg];
+  const [selectedImage, setSelectedImage] = useState(finalImageList[0]);
 
   return (
     <div className="space-y-4">
@@ -16,17 +21,16 @@ export const ProductGallery = ({ images = [] }) => {
           referrerPolicy="no-referrer"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = DEFAULT_FALLBACK_IMAGE;
+            e.target.src = fallbackSvg;
           }}
           className="w-full h-full object-contain max-h-[420px] transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
       {/* Thumbnail Gallery */}
-      {imageList.length > 1 && (
+      {finalImageList.length > 1 && (
         <div className="flex space-x-3 overflow-x-auto pb-2">
-          {imageList.map((imgObj, idx) => {
-            const imgUrl = typeof imgObj === 'string' ? imgObj : imgObj.url;
+          {finalImageList.map((imgUrl, idx) => {
             return (
               <button
                 key={idx}
@@ -41,7 +45,7 @@ export const ProductGallery = ({ images = [] }) => {
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = DEFAULT_FALLBACK_IMAGE;
+                    e.target.src = fallbackSvg;
                   }}
                   className="w-full h-full object-cover"
                 />
