@@ -5,16 +5,16 @@ import { formatCurrency } from '../../utils/formatCurrency';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
+
 export const ProductCard = ({ product }) => {
   const { cart, addToCart, updateQty } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const DEFAULT_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop';
+  const fallbackSvg = getProductSvg(product.name, product.category?.name);
   const getImageUrl = (img) => (typeof img === 'string' ? img : img?.url);
-  const primaryImage =
-    getImageUrl(product.images?.find((img) => img?.isPrimary)) ||
-    getImageUrl(product.images?.[0]) ||
-    DEFAULT_PRODUCT_IMAGE;
+  const rawImg = getImageUrl(product.images?.find((img) => img?.isPrimary)) || getImageUrl(product.images?.[0]);
+  const primaryImage = (rawImg && !rawImg.includes('unsplash.com')) ? rawImg : fallbackSvg;
   const isWishlisted = isInWishlist(product._id);
 
   const cartItem = cart?.items?.find((item) => item.product?._id === product._id);
@@ -56,7 +56,7 @@ export const ProductCard = ({ product }) => {
           referrerPolicy="no-referrer"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = DEFAULT_PRODUCT_IMAGE;
+            e.target.src = fallbackSvg;
           }}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"

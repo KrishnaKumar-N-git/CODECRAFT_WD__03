@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import productService from '../../services/productService';
 import storeService from '../../services/storeService';
 import ProductGrid from '../../components/product/ProductGrid';
+import { getCategorySvg } from '../../utils/grocerySvgLibrary';
 import {
   ShoppingBag,
   Sparkles,
@@ -176,12 +177,12 @@ export const Home = () => {
             >
               <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 p-1 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop'}
+                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) && !cat.image?.url?.includes('unsplash') ? (cat.image?.url || cat.image) : getCategorySvg(cat.name)}
                   alt={cat.name}
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=200&auto=format&fit=crop';
+                    e.target.src = getCategorySvg(cat.name);
                   }}
                   className="w-full h-full object-cover rounded-xl"
                 />
