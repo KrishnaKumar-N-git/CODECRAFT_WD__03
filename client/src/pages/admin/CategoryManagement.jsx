@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
-import { Layers, Plus, Trash2, Edit3, Image as ImageIcon } from 'lucide-react';
+import { Layers, Plus, Trash2, Edit3, Image as ImageIcon, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getCategorySvg } from '../../utils/grocerySvgLibrary';
 
@@ -9,6 +9,24 @@ export const CategoryManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCat, setNewCat] = useState({ name: '', description: '', imageUrl: '' });
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64Url = uploadEvent.target.result;
+      setNewCat((prev) => ({ ...prev, imageUrl: base64Url }));
+      toast.success('Category photo loaded from device!');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const fetchCategories = async () => {
     try {
@@ -77,31 +95,69 @@ export const CategoryManagement = () => {
       {showAddForm && (
         <form onSubmit={handleCreateCategory} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-3">
           <h3 className="text-sm font-extrabold text-gray-900">Add Category</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input
-              type="text"
-              placeholder="Category Name (e.g. Fruits & Vegetables)"
-              required
-              value={newCat.name}
-              onChange={(e) => setNewCat({ ...newCat, name: e.target.value })}
-              className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <input
-              type="url"
-              placeholder="Image URL"
-              value={newCat.imageUrl}
-              onChange={(e) => setNewCat({ ...newCat, imageUrl: e.target.value })}
-              className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="Category Name (e.g. Fruits & Vegetables)"
+                required
+                value={newCat.name}
+                onChange={(e) => setNewCat({ ...newCat, name: e.target.value })}
+                className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <input
+                type="text"
+                placeholder="Short Description"
+                value={newCat.description}
+                onChange={(e) => setNewCat({ ...newCat, description: e.target.value })}
+                className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              <label className="flex items-center justify-center space-x-2 p-3 bg-purple-50 hover:bg-purple-100 text-purple-800 border-2 border-dashed border-purple-300 rounded-xl cursor-pointer font-bold text-xs transition-colors">
+                <Upload className="w-4 h-4 text-purple-600" />
+                <span>Upload Photo from Device</span>
+                <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+              </label>
+
+              <input
+                type="url"
+                placeholder="Or paste web image link..."
+                value={newCat.imageUrl}
+                onChange={(e) => setNewCat({ ...newCat, imageUrl: e.target.value })}
+                className="p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+
+            <div className="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-xl border border-gray-200">
+              <img
+                src={(newCat.imageUrl && typeof newCat.imageUrl === 'string' && !newCat.imageUrl.includes('unsplash.com') && !newCat.imageUrl.includes('via.placeholder')) ? newCat.imageUrl : getCategorySvg(newCat.name || 'Category')}
+                alt="Category Preview"
+                className="w-12 h-12 rounded-lg object-cover border border-gray-200 bg-white"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = getCategorySvg(newCat.name || 'Category');
+                }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-gray-900 truncate">
+                  {newCat.imageUrl ? (newCat.imageUrl.startsWith('data:') ? 'Photo loaded from device' : 'Web Image Link') : 'Auto-generated GrocMart graphic'}
+                </p>
+                {newCat.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setNewCat({ ...newCat, imageUrl: '' })}
+                    className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
+                  >
+                    <X className="w-3 h-3" /> Clear Custom Photo
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          <input
-            type="text"
-            placeholder="Short Description"
-            value={newCat.description}
-            onChange={(e) => setNewCat({ ...newCat, description: e.target.value })}
-            className="w-full p-3 bg-gray-50 border border-gray-200 text-xs rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <button type="submit" className="px-5 py-2.5 bg-purple-600 text-white rounded-xl text-xs font-bold">
+
+          <button type="submit" className="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-colors">
             Save Category
           </button>
         </form>

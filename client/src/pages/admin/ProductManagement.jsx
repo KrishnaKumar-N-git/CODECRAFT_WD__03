@@ -74,13 +74,16 @@ export const ProductManagement = () => {
       sellingPrice: 85,
       stock: 50,
       category: categories[0]?._id || '',
-      imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'
+      imageUrl: ''
     });
     setShowModal(true);
   };
 
   const openEditModal = (product) => {
     setEditingProduct(product);
+    const rawImg = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
+    const cleanImg = (rawImg && typeof rawImg === 'string' && !rawImg.includes('unsplash.com') && !rawImg.includes('via.placeholder')) ? rawImg : '';
+
     setFormData({
       name: product.name || '',
       brand: product.brand || '',
@@ -89,7 +92,7 @@ export const ProductManagement = () => {
       sellingPrice: product.sellingPrice || 85,
       stock: product.stock || 50,
       category: product.category?._id || product.category || categories[0]?._id || '',
-      imageUrl: product.images?.[0]?.url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500'
+      imageUrl: cleanImg
     });
     setShowModal(true);
   };
