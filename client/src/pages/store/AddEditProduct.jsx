@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import api from '../../services/api';
-import { ArrowLeft, Save, Package, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Package, Image as ImageIcon, Upload, X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const AddEditProduct = () => {
   const { id } = useParams();
@@ -59,9 +60,26 @@ export const AddEditProduct = () => {
           toast.error('Failed to fetch product details');
         }
       };
-      fetchProduct();
     }
   }, [id, isEdit]);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64Url = uploadEvent.target.result;
+      setFormData((prev) => ({ ...prev, imageUrl: base64Url }));
+      toast.success('Photo loaded from your device!');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -207,19 +225,56 @@ export const AddEditProduct = () => {
             />
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-2 col-span-1 sm:col-span-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-gray-700">Image URL (Optional)</label>
+              <label className="text-xs font-bold text-gray-700">Product Photo</label>
               <span className="text-[10px] text-emerald-700 font-bold">Auto-generates icon if left empty</span>
             </div>
-            <input
-              type="url"
-              placeholder="https://upload.wikimedia.org/... or direct .jpg/.png link"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-            />
-            <p className="text-[10px] text-gray-500">Paste any direct public image link (ending in .jpg, .png, .webp). If left empty, GrocMart creates a crisp graphic automatically!</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              {/* Direct File Picker Button */}
+              <label className="flex items-center justify-center space-x-2 p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-dashed border-emerald-300 rounded-xl cursor-pointer font-bold text-xs transition-colors">
+                <Upload className="w-4 h-4 text-emerald-600" />
+                <span>Upload Photo from Device</span>
+                <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+              </label>
+
+              {/* Or Web Link Input */}
+              <input
+                type="url"
+                placeholder="Or paste web image link (.jpg/.png)..."
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+              />
+            </div>
+
+            {/* Live Image Preview */}
+            <div className="flex items-center space-x-3 p-2.5 bg-gray-50 rounded-xl border border-gray-200">
+              <img
+                src={formData.imageUrl || getProductSvg(formData.name || 'Grocery Product')}
+                alt="Product Preview"
+                className="w-14 h-14 object-cover rounded-lg border border-gray-200 bg-white"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = getProductSvg(formData.name || 'Grocery Product');
+                }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-gray-900 truncate">
+                  {formData.imageUrl ? (formData.imageUrl.startsWith('data:') ? 'Photo loaded from device' : 'Web Image Link') : 'Auto-generated GrocMart graphic'}
+                </p>
+                {formData.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                    className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
+                  >
+                    <X className="w-3 h-3" /> Clear Custom Photo
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { productService } from '../../services/productService';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { Package, Search, Trash2, Plus, Edit3, X, Image as ImageIcon, Save, Check } from 'lucide-react';
+import { Package, Search, Trash2, Plus, Edit3, X, Image as ImageIcon, Save, Check, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
@@ -25,6 +25,24 @@ export const ProductManagement = () => {
     imageUrl: ''
   });
   const [saving, setSaving] = useState(false);
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64Url = uploadEvent.target.result;
+      setFormData((prev) => ({ ...prev, imageUrl: base64Url }));
+      toast.success('Photo loaded from your device!');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const fetchProductsAndCategories = async () => {
     try {
@@ -343,34 +361,58 @@ export const ProductManagement = () => {
                 </select>
               </div>
 
-              {/* Product Image URL Input & Direct Web Preview */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
-                  <span>Product Image Direct URL (Optional)</span>
-                  <span className="text-[10px] text-purple-600 font-semibold">Auto-generates icon if left empty</span>
-                </label>
-                <div className="flex items-center space-x-3">
-                  <div className="relative flex-1">
+              {/* Product Image Selection & Live Device Upload */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-700">Product Photo</label>
+                  <span className="text-[10px] text-purple-600 font-bold">Auto-generates icon if empty</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center">
+                  {/* File Picker */}
+                  <label className="flex items-center justify-center space-x-2 p-2.5 bg-purple-50 hover:bg-purple-100 text-purple-800 border-2 border-dashed border-purple-300 rounded-xl cursor-pointer font-bold text-xs transition-colors">
+                    <Upload className="w-4 h-4 text-purple-600" />
+                    <span>Upload Photo from Device</span>
+                    <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                  </label>
+
+                  {/* Web URL */}
+                  <div className="relative">
                     <input
                       type="url"
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      placeholder="https://upload.wikimedia.org/... or direct image link"
-                      className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium pl-9 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      placeholder="Or paste image URL..."
+                      className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium pl-8 focus:ring-2 focus:ring-purple-500 focus:outline-none"
                     />
-                    <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
+                    <ImageIcon className="w-3.5 h-3.5 text-gray-400 absolute left-2.5 top-3" />
                   </div>
-                  {/* Live Web Image Preview */}
-                  <div className="w-11 h-11 rounded-xl border border-gray-200 overflow-hidden bg-gray-100 shrink-0">
-                    <img
-                      src={(formData.imageUrl && typeof formData.imageUrl === 'string' && !formData.imageUrl.includes('unsplash.com') && !formData.imageUrl.includes('via.placeholder')) ? formData.imageUrl : getProductSvg(formData.name || 'Preview')}
-                      alt="Preview"
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = getProductSvg(formData.name || 'Preview');
-                      }}
-                    />
+                </div>
+
+                {/* Live Preview */}
+                <div className="flex items-center space-x-3 p-2 bg-gray-50 rounded-xl border border-gray-200">
+                  <img
+                    src={(formData.imageUrl && typeof formData.imageUrl === 'string' && !formData.imageUrl.includes('unsplash.com') && !formData.imageUrl.includes('via.placeholder')) ? formData.imageUrl : getProductSvg(formData.name || 'Preview')}
+                    alt="Preview"
+                    className="w-12 h-12 rounded-lg object-cover border border-gray-200 bg-white"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getProductSvg(formData.name || 'Preview');
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-900 truncate">
+                      {formData.imageUrl ? (formData.imageUrl.startsWith('data:') ? 'Photo loaded from device' : 'Web Image Link') : 'Auto-generated GrocMart graphic'}
+                    </p>
+                    {formData.imageUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                        className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-0.5"
+                      >
+                        <X className="w-3 h-3" /> Clear Custom Photo
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
