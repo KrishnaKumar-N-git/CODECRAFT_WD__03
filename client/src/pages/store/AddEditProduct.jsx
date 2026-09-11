@@ -208,14 +208,18 @@ export const AddEditProduct = () => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-700">Image URL</label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-gray-700">Image URL (Optional)</label>
+              <span className="text-[10px] text-emerald-700 font-bold">Auto-generates icon if left empty</span>
+            </div>
             <input
               type="url"
-              placeholder="https://images.unsplash.com/..."
+              placeholder="https://upload.wikimedia.org/... or direct .jpg/.png link"
               value={formData.imageUrl}
               onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
               className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
+            <p className="text-[10px] text-gray-500">Paste any direct public image link (ending in .jpg, .png, .webp). If left empty, GrocMart creates a crisp graphic automatically!</p>
           </div>
         </div>
 

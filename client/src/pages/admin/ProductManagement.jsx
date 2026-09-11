@@ -346,17 +346,16 @@ export const ProductManagement = () => {
               {/* Product Image URL Input & Direct Web Preview */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
-                  <span>Product Image Direct URL *</span>
-                  <span className="text-[10px] text-purple-600 font-semibold">Paste web image link</span>
+                  <span>Product Image Direct URL (Optional)</span>
+                  <span className="text-[10px] text-purple-600 font-semibold">Auto-generates icon if left empty</span>
                 </label>
                 <div className="flex items-center space-x-3">
                   <div className="relative flex-1">
                     <input
                       type="url"
-                      required
                       value={formData.imageUrl}
                       onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      placeholder="https://example.com/product-image.jpg"
+                      placeholder="https://upload.wikimedia.org/... or direct image link"
                       className="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium pl-9 focus:ring-2 focus:ring-purple-500 focus:outline-none"
                     />
                     <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
