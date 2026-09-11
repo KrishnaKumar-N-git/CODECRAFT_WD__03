@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { Layers, Plus, Trash2, Edit3, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getCategorySvg } from '../../utils/grocerySvgLibrary';
 
 export const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -117,11 +118,17 @@ export const CategoryManagement = () => {
             <div key={cat._id} className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <img
-                  src={cat.image?.url || 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=100&auto=format&fit=crop'}
+                  src={(() => {
+                    const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
+                    return (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder'))
+                      ? rawUrl
+                      : getCategorySvg(cat.name);
+                  })()}
                   alt={cat.name}
+                  referrerPolicy="no-referrer"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=100&auto=format&fit=crop';
+                    e.target.src = getCategorySvg(cat.name);
                   }}
                   className="w-12 h-12 rounded-2xl object-cover border border-gray-100"
                 />

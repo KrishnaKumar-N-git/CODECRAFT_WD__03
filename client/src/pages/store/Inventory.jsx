@@ -3,6 +3,7 @@ import { productService } from '../../services/productService';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { Package, Save, AlertCircle, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const StoreInventory = () => {
   const [products, setProducts] = useState([]);
@@ -83,11 +84,23 @@ export const StoreInventory = () => {
                 <tr key={product._id} className="hover:bg-gray-50/80 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
-                      <img
-                        src={product.images?.[0]?.url || 'https://picsum.photos/80/80'}
-                        alt={product.name}
-                        className="w-10 h-10 rounded-xl object-cover border border-gray-200"
-                      />
+                      {(() => {
+                        const rawUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
+                        const fallbackSvg = getProductSvg(product.name, product.category?.name);
+                        const imgSrc = (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('picsum.photos') && !rawUrl.includes('via.placeholder')) ? rawUrl : fallbackSvg;
+                        return (
+                          <img
+                            src={imgSrc}
+                            alt={product.name}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = fallbackSvg;
+                            }}
+                            className="w-10 h-10 rounded-xl object-cover border border-gray-200"
+                          />
+                        );
+                      })()}
                       <div>
                         <h4 className="font-bold text-gray-900">{product.name}</h4>
                         <p className="text-[10px] text-gray-400">{product.weight}</p>

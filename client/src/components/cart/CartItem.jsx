@@ -4,23 +4,28 @@ import { formatCurrency } from '../../utils/formatCurrency';
 import { QuantitySelector } from '../product/ProductGallery';
 import { useCart } from '../../context/CartContext';
 
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
+
 export const CartItem = ({ item }) => {
   const { updateQty, removeFromCart } = useCart();
   const product = item.product || {};
-  const DEFAULT_CART_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&auto=format&fit=crop';
+  const fallbackSvg = getProductSvg(product.name || item.name, product.category?.name);
   const getImg = (imgObj) => (typeof imgObj === 'string' ? imgObj : imgObj?.url);
-  const image = getImg(product.images?.[0]) || item.image || DEFAULT_CART_IMAGE;
+  const rawImg = getImg(product.images?.[0]) || item.image;
+  const image = (rawImg && typeof rawImg === 'string' && !rawImg.includes('unsplash.com') && !rawImg.includes('via.placeholder'))
+    ? rawImg
+    : fallbackSvg;
 
   return (
     <div className="flex items-center space-x-4 py-4 border-b border-gray-100 last:border-0">
       {/* Product Image */}
       <img
         src={image}
-        alt={product.name}
+        alt={product.name || item.name}
         referrerPolicy="no-referrer"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = DEFAULT_CART_IMAGE;
+          e.target.src = fallbackSvg;
         }}
         className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl bg-gray-50 border border-gray-100 shrink-0"
       />

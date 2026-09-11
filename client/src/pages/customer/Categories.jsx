@@ -50,7 +50,12 @@ export const Categories = () => {
             >
               <div className="w-20 h-20 mx-auto rounded-2xl bg-brand-50 p-2 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) && !cat.image?.url?.includes('unsplash') ? (cat.image?.url || cat.image) : getCategorySvg(cat.name)}
+                  src={(() => {
+                    const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
+                    return (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder'))
+                      ? rawUrl
+                      : getCategorySvg(cat.name);
+                  })()}
                   alt={cat.name}
                   referrerPolicy="no-referrer"
                   onError={(e) => {

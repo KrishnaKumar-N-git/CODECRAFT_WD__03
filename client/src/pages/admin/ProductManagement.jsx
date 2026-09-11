@@ -3,6 +3,7 @@ import { productService } from '../../services/productService';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { Package, Search, Trash2, Plus, Edit3, X, Image as ImageIcon, Save, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const ProductManagement = () => {
   const [products, setProducts] = useState([]);
@@ -219,16 +220,23 @@ export const ProductManagement = () => {
                 <tr key={product._id} className="hover:bg-gray-50/80 transition-colors">
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
-                      <img
-                        src={(typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
-                        alt={product.name}
-                        referrerPolicy="no-referrer"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100';
-                        }}
-                        className="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0"
-                      />
+                      {(() => {
+                        const rawUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
+                        const fallbackSvg = getProductSvg(product.name, product.category?.name);
+                        const imgSrc = (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder')) ? rawUrl : fallbackSvg;
+                        return (
+                          <img
+                            src={imgSrc}
+                            alt={product.name}
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = fallbackSvg;
+                            }}
+                            className="w-12 h-12 rounded-xl object-cover border border-gray-200 shadow-sm shrink-0"
+                          />
+                        );
+                      })()}
 
                       <div>
                         <h4 className="font-bold text-gray-900">{product.name}</h4>
@@ -356,12 +364,12 @@ export const ProductManagement = () => {
                   {/* Live Web Image Preview */}
                   <div className="w-11 h-11 rounded-xl border border-gray-200 overflow-hidden bg-gray-100 shrink-0">
                     <img
-                      src={formData.imageUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'}
+                      src={(formData.imageUrl && typeof formData.imageUrl === 'string' && !formData.imageUrl.includes('unsplash.com') && !formData.imageUrl.includes('via.placeholder')) ? formData.imageUrl : getProductSvg(formData.name || 'Preview')}
                       alt="Preview"
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100';
+                        e.target.src = getProductSvg(formData.name || 'Preview');
                       }}
                     />
                   </div>

@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { ShoppingBag, Truck, MapPin, Phone, User, CheckCircle2, Clock, ChevronDown, Package, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const OrderDeliveryManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -223,8 +224,13 @@ export const OrderDeliveryManagement = () => {
                   {order.items?.map((item, idx) => (
                     <div key={idx} className="flex items-center space-x-2.5 p-2 bg-gray-50/70 rounded-xl border border-gray-100">
                       <img
-                        src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=80'}
+                        src={(item.image && typeof item.image === 'string' && !item.image.includes('unsplash.com') && !item.image.includes('via.placeholder')) ? item.image : getProductSvg(item.name)}
                         alt={item.name}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = getProductSvg(item.name);
+                        }}
                         className="w-9 h-9 rounded-lg object-cover border border-gray-200 shrink-0"
                       />
                       <div className="min-w-0 flex-1 text-xs">

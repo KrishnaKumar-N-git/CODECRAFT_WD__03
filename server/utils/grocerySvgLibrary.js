@@ -4,7 +4,8 @@
  */
 
 const encodeSvg = (svgString) => {
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svgString.trim().replace(/\s+/g, ' '))}`;
+  const clean = svgString.trim().replace(/\s+/g, ' ');
+  return `data:image/svg+xml;base64,${Buffer.from(clean).toString('base64')}`;
 };
 
 const createProductCardSvg = (title, categoryName, bg1, bg2, accent, mainShape) => {

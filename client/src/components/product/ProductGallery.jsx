@@ -6,7 +6,7 @@ export const ProductGallery = ({ images = [], productName = '', categoryName = '
   const getImgUrl = (img) => (typeof img === 'string' ? img : img?.url);
   const validImages = images
     .map(getImgUrl)
-    .filter((url) => url && !url.includes('unsplash.com'));
+    .filter((url) => url && typeof url === 'string' && !url.includes('unsplash.com') && !url.includes('via.placeholder'));
 
   const finalImageList = validImages.length > 0 ? validImages : [fallbackSvg];
   const [selectedImage, setSelectedImage] = useState(finalImageList[0]);

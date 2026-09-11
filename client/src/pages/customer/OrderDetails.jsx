@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { orderService } from '../../services/orderService';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 import {
   Package,
   CheckCircle2,
@@ -160,20 +161,16 @@ export const OrderDetails = () => {
             {order.items?.map((item, idx) => (
               <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-gray-50/70 border border-gray-100">
                 <div className="flex items-center space-x-3">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
-                      }}
-                      className="w-12 h-12 rounded-xl object-cover border border-gray-200"
-                    />
-                  ) : (
-                    <Package className="w-10 h-10 text-gray-400" />
-                  )}
+                  <img
+                    src={(item.image && typeof item.image === 'string' && !item.image.includes('unsplash.com') && !item.image.includes('via.placeholder')) ? item.image : getProductSvg(item.name)}
+                    alt={item.name}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getProductSvg(item.name);
+                    }}
+                    className="w-12 h-12 rounded-xl object-cover border border-gray-200"
+                  />
                   <div>
                     <h4 className="text-xs font-bold text-gray-900">{item.name}</h4>
                     <p className="text-[10px] text-gray-500">{item.weight || 'Standard Pack'}</p>

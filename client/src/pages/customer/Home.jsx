@@ -107,9 +107,8 @@ export const Home = () => {
         {/* Hero Decorative Banner Image */}
         <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-96 h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
           <img
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&auto=format&fit=crop"
+            src={getCategorySvg('Grocery')}
             alt="GrocMart Grocery Essentials"
-            referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
         </div>
@@ -177,7 +176,12 @@ export const Home = () => {
             >
               <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 p-1 overflow-hidden group-hover:scale-105 transition-transform">
                 <img
-                  src={(typeof cat.image === 'string' ? cat.image : cat.image?.url) && !cat.image?.url?.includes('unsplash') ? (cat.image?.url || cat.image) : getCategorySvg(cat.name)}
+                  src={(() => {
+                    const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
+                    return (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder'))
+                      ? rawUrl
+                      : getCategorySvg(cat.name);
+                  })()}
                   alt={cat.name}
                   referrerPolicy="no-referrer"
                   onError={(e) => {

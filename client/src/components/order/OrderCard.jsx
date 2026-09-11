@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, ChevronRight, Clock } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatCurrency';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const OrderCard = ({ order, onCancel }) => {
   const isCancellable = ['PENDING', 'CONFIRMED'].includes(order.orderStatus);
@@ -43,12 +44,12 @@ export const OrderCard = ({ order, onCancel }) => {
         {order.items?.map((item, idx) => (
           <div key={idx} className="relative group shrink-0">
             <img
-              src={item.image || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop'}
+              src={(item.image && typeof item.image === 'string' && !item.image.includes('unsplash.com') && !item.image.includes('via.placeholder')) ? item.image : getProductSvg(item.name)}
               alt={item.name}
               referrerPolicy="no-referrer"
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
+                e.target.src = getProductSvg(item.name);
               }}
               className="w-14 h-14 object-cover rounded-xl bg-gray-50 border border-gray-100"
             />

@@ -4,6 +4,7 @@ import { productService } from '../../services/productService';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { Plus, Search, Edit3, Trash2, Package, Tag, Star, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
 export const StoreProducts = () => {
   const [products, setProducts] = useState([]);
@@ -106,16 +107,23 @@ export const StoreProducts = () => {
                   <tr key={product._id} className="hover:bg-gray-50/80 transition-colors">
                     <td className="p-4">
                       <div className="flex items-center space-x-3">
-                        <img
-                          src={(typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url) || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop'}
-                          alt={product.name}
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=100&auto=format&fit=crop';
-                          }}
-                          className="w-12 h-12 rounded-xl object-cover border border-gray-200"
-                        />
+                        {(() => {
+                          const rawUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
+                          const fallbackSvg = getProductSvg(product.name, product.category?.name);
+                          const imgSrc = (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder')) ? rawUrl : fallbackSvg;
+                          return (
+                            <img
+                              src={imgSrc}
+                              alt={product.name}
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = fallbackSvg;
+                              }}
+                              className="w-12 h-12 rounded-xl object-cover border border-gray-200"
+                            />
+                          );
+                        })()}
                         <div>
                           <h4 className="font-bold text-gray-900 text-xs">{product.name}</h4>
                           <p className="text-[10px] text-gray-400">Brand: {product.brand || 'Generic'} • {product.weight || 'Pack'}</p>
