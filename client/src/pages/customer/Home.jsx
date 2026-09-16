@@ -107,10 +107,12 @@ export const Home = () => {
 
         {/* Hero Decorative Banner Image */}
         <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-96 h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
-          <img
-            src={getCategorySvg('Grocery')}
+          <ImageWithFallback
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg"
             alt="GrocMart Grocery Essentials"
+            categoryName="Fruits & Vegetables"
             className="w-full h-full object-cover"
+            iconSize="text-7xl"
           />
         </div>
       </section>
