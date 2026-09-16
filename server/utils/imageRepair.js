@@ -58,8 +58,6 @@ const repairProductImages = async () => {
 
 module.exports = {
   DEFAULT_IMAGE,
-  categoryImages,
-  productImageMap,
   getRelevantImage,
   repairProductImages
 };
