@@ -2,15 +2,18 @@ const cloudinary = require('../config/cloudinary');
 
 const uploadToCloudinary = (fileBuffer, folder = 'apk_grocery') => {
   return new Promise((resolve, reject) => {
-    // Check if Cloudinary credentials are demo / unconfigured
-    if (!process.env.CLOUDINARY_CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME === 'demo_cloud') {
-      const mockId = `mock_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      return resolve({
-        url: `https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&auto=format&fit=crop`,
-        publicId: mockId
-      });
+    // Validate that real Cloudinary credentials are configured
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      process.env.CLOUDINARY_CLOUD_NAME === 'demo' ||
+      process.env.CLOUDINARY_CLOUD_NAME === 'demo_cloud'
+    ) {
+      return reject(
+        new Error(
+          'Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your environment variables.'
+        )
+      );
     }
-
 
     const uploadStream = cloudinary.uploader.upload_stream(
       {

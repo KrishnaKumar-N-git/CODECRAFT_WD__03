@@ -14,7 +14,9 @@ export const ProductCard = ({ product }) => {
   const fallbackSvg = getProductSvg(product.name, product.category?.name);
   const getImageUrl = (img) => (typeof img === 'string' ? img : img?.url);
   const rawImg = getImageUrl(product.images?.find((img) => img?.isPrimary)) || getImageUrl(product.images?.[0]);
-  const primaryImage = (rawImg && typeof rawImg === 'string' && !rawImg.includes('unsplash.com') && !rawImg.includes('via.placeholder')) ? rawImg : fallbackSvg;
+  const primaryImage = (rawImg && typeof rawImg === 'string' && rawImg.startsWith('http'))
+    ? rawImg
+    : fallbackSvg;
   const isWishlisted = isInWishlist(product._id);
 
   const cartItem = cart?.items?.find((item) => item.product?._id === product._id);
