@@ -13,44 +13,36 @@ export const ProductGallery = ({ images = [], productName = '', categoryName = '
   return (
     <div className="space-y-4">
       {/* Main Image Display */}
-      <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 aspect-square flex items-center justify-center relative overflow-hidden group">
+      <div className="bg-white rounded-3xl p-6 border border-gray-100 aspect-square flex items-center justify-center relative overflow-hidden group shadow-sm">
         <ImageWithFallback
           src={selectedImage}
           alt={productName}
           categoryName={categoryName}
           className="w-full h-full object-contain max-h-[420px] transition-transform duration-300 group-hover:scale-105"
-          iconSize="text-6xl"
         />
       </div>
 
       {/* Thumbnail Gallery */}
       {finalImageList.length > 1 && (
         <div className="flex space-x-3 overflow-x-auto pb-2">
-          {finalImageList.map((imgUrl, idx) => {
-            return (
-              <button
-                key={idx}
-                onClick={() => setSelectedImage(imgUrl)}
-                className={`w-16 h-16 rounded-xl border-2 overflow-hidden bg-gray-50 flex-shrink-0 transition-all ${
-                  selectedImage === imgUrl ? 'border-brand-600 shadow-sm scale-105' : 'border-gray-200 opacity-70 hover:opacity-100'
-                }`}
-              >
-                <img
-                  src={imgUrl}
-                  alt={`Thumbnail ${idx}`}
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = fallbackSvg;
-                  }}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            );
-          })}
+          {finalImageList.map((imgUrl, idx) => (
+            <button
+              key={idx}
+              onClick={() => setSelectedImage(imgUrl)}
+              className={`w-16 h-16 rounded-2xl border-2 overflow-hidden bg-gray-50 flex-shrink-0 transition-all ${
+                selectedImage === imgUrl ? 'border-brand-600 shadow-md scale-105' : 'border-gray-200 opacity-70 hover:opacity-100'
+              }`}
+            >
+              <ImageWithFallback
+                src={imgUrl}
+                alt={`${productName} thumbnail ${idx}`}
+                categoryName={categoryName}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
         </div>
       )}
-
     </div>
   );
 };

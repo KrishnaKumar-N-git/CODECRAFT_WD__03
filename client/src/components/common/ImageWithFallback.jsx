@@ -1,73 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const CATEGORY_STYLE_MAP = {
-  'fruits': { emoji: '🍎', bg: 'from-amber-50 to-orange-100', text: 'text-amber-900', border: 'border-amber-200' },
-  'vegetables': { emoji: '🥦', bg: 'from-emerald-50 to-green-100', text: 'text-emerald-900', border: 'border-emerald-200' },
-  'dairy': { emoji: '🥛', bg: 'from-sky-50 to-blue-100', text: 'text-blue-900', border: 'border-blue-200' },
-  'eggs': { emoji: '🥚', bg: 'from-amber-50 to-yellow-100', text: 'text-amber-900', border: 'border-yellow-200' },
-  'bakery': { emoji: '🍞', bg: 'from-amber-50 to-orange-100', text: 'text-amber-900', border: 'border-amber-200' },
-  'bread': { emoji: '🥐', bg: 'from-amber-50 to-yellow-100', text: 'text-amber-900', border: 'border-yellow-200' },
-  'beverages': { emoji: '🧃', bg: 'from-purple-50 to-indigo-100', text: 'text-purple-900', border: 'border-purple-200' },
-  'oil': { emoji: '🛢️', bg: 'from-yellow-50 to-amber-100', text: 'text-yellow-900', border: 'border-yellow-200' },
-  'ghee': { emoji: '🧈', bg: 'from-yellow-50 to-amber-100', text: 'text-amber-900', border: 'border-amber-200' },
-  'rice': { emoji: '🌾', bg: 'from-stone-50 to-amber-100', text: 'text-stone-900', border: 'border-stone-200' },
-  'staples': { emoji: '🍚', bg: 'from-stone-50 to-orange-100', text: 'text-stone-900', border: 'border-stone-200' },
-  'baby': { emoji: '👶', bg: 'from-pink-50 to-rose-100', text: 'text-pink-900', border: 'border-pink-200' },
-  'frozen': { emoji: '🧊', bg: 'from-cyan-50 to-sky-100', text: 'text-cyan-900', border: 'border-cyan-200' },
-  'household': { emoji: '🧼', bg: 'from-teal-50 to-cyan-100', text: 'text-teal-900', border: 'border-teal-200' },
-  'cleaning': { emoji: '🧽', bg: 'from-teal-50 to-emerald-100', text: 'text-teal-900', border: 'border-teal-200' },
-  'instant': { emoji: '🍜', bg: 'from-orange-50 to-red-100', text: 'text-orange-900', border: 'border-orange-200' },
-  'personal': { emoji: '🧴', bg: 'from-rose-50 to-pink-100', text: 'text-rose-900', border: 'border-rose-200' },
-  'tea': { emoji: '☕', bg: 'from-emerald-50 to-teal-100', text: 'text-emerald-900', border: 'border-emerald-200' },
-  'coffee': { emoji: '☕', bg: 'from-amber-100 to-stone-200', text: 'text-stone-900', border: 'border-stone-300' },
-  'snacks': { emoji: '🍿', bg: 'from-yellow-50 to-orange-100', text: 'text-orange-900', border: 'border-orange-200' },
-  'spices': { emoji: '🌶️', bg: 'from-red-50 to-orange-100', text: 'text-red-900', border: 'border-red-200' },
+// Real high-resolution public Wikimedia Commons photos for products & categories
+const REAL_PHOTO_GALLERY = {
+  'banana': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/800px-Banana-Single.jpg',
+  'apple': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg',
+  'tomato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/800px-Tomato_je.jpg',
+  'potato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/800px-Patates.jpg',
+  'onion': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Onion_on_White.JPG/800px-Onion_on_White.JPG',
+  'milk': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/800px-Milk_glass.jpg',
+  'paneer': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paneer_cubes.jpg/800px-Paneer_cubes.jpg',
+  'butter': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/800px-Supreme_cut_butter.jpg',
+  'bread': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
+  'porotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
+  'parotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
+  'fish': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Salmon_raw.jpg/800px-Salmon_raw.jpg',
+  'rice': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/800px-Uncooked_rice.jpg',
+  'oil': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Olive_oil_from_One_Two_Free.jpg/800px-Olive_oil_from_One_Two_Free.jpg',
+  'ghee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/800px-Supreme_cut_butter.jpg',
+  'tea': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
+  'coffee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
+  'egg': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Egg_white.jpg/800px-Egg_white.jpg',
+
+  // Category real photo fallbacks
+  'fruits': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg',
+  'vegetables': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/800px-Tomato_je.jpg',
+  'dairy': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/800px-Milk_glass.jpg',
+  'bakery': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
+  'beverages': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
+  'staples': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/800px-Uncooked_rice.jpg',
+  'default': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg'
 };
 
-const getStyleForContext = (name = '', categoryName = '') => {
-  const query = `${name} ${categoryName}`.toLowerCase();
-  for (const [key, val] of Object.entries(CATEGORY_STYLE_MAP)) {
-    if (query.includes(key)) return val;
+export const getRealPhotoFallback = (alt = '', categoryName = '') => {
+  const text = `${alt} ${categoryName}`.toLowerCase();
+  for (const [key, url] of Object.entries(REAL_PHOTO_GALLERY)) {
+    if (text.includes(key)) return url;
   }
-  return { emoji: '🛒', bg: 'from-emerald-50 to-teal-100', text: 'text-emerald-900', border: 'border-emerald-200' };
+  return REAL_PHOTO_GALLERY['default'];
 };
 
 export const ImageWithFallback = ({
   src,
   alt = '',
   categoryName = '',
-  className = '',
-  iconSize = 'text-3xl',
-  showLabel = true,
-  fallbackType = 'product'
+  className = ''
 }) => {
-  const [hasError, setHasError] = useState(false);
+  const realPhoto = getRealPhotoFallback(alt, categoryName);
+  const isValidSource = src && typeof src === 'string' && src.trim().startsWith('http') && !src.startsWith('data:');
+  
+  const [imgSrc, setImgSrc] = useState(isValidSource ? src : realPhoto);
 
-  // If URL is missing, invalid or an old broken SVG data URI string, trigger fallback directly
-  const isInvalidUrl = !src || typeof src !== 'string' || src.trim() === '' || src.startsWith('data:image/svg+xml');
-
-  if (hasError || isInvalidUrl) {
-    const style = getStyleForContext(alt, categoryName);
-    return (
-      <div className={`w-full h-full flex flex-col items-center justify-center bg-gradient-to-br ${style.bg} ${style.border} border p-2 text-center select-none overflow-hidden ${className}`}>
-        <span className={`${iconSize} drop-shadow-sm transition-transform hover:scale-110`}>
-          {style.emoji}
-        </span>
-        {showLabel && alt && (
-          <span className={`mt-1 text-[10px] font-black ${style.text} tracking-tight line-clamp-1 leading-none uppercase`}>
-            {alt}
-          </span>
-        )}
-      </div>
-    );
-  }
+  useEffect(() => {
+    const valid = src && typeof src === 'string' && src.trim().startsWith('http') && !src.startsWith('data:');
+    setImgSrc(valid ? src : realPhoto);
+  }, [src, alt, categoryName, realPhoto]);
 
   return (
     <img
-      src={src}
-      alt={alt}
+      src={imgSrc}
+      alt={alt || 'Grocery item'}
       className={className}
-      onError={() => setHasError(true)}
+      onError={() => {
+        if (imgSrc !== realPhoto) {
+          setImgSrc(realPhoto);
+        }
+      }}
       loading="lazy"
     />
   );
