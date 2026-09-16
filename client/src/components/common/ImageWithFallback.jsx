@@ -39,6 +39,7 @@ export const ImageWithFallback = ({
   categoryName = '',
   className = ''
 }) => {
+  const [hasError, setHasError] = useState(false);
   const isValidSource = Boolean(src && typeof src === 'string' && src.trim().length > 0);
 
   useEffect(() => {
