@@ -1,35 +1,41 @@
 import React, { useState, useEffect } from 'react';
 
-// Real high-resolution public Wikimedia Commons photos for products & categories
+// Multi-source reliable photo fallback chain (Pexels, Wikimedia, Unsplash)
 const REAL_PHOTO_GALLERY = {
-  'banana': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/800px-Banana-Single.jpg',
-  'apple': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg',
-  'tomato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/800px-Tomato_je.jpg',
-  'potato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/800px-Patates.jpg',
-  'onion': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Onion_on_White.JPG/800px-Onion_on_White.JPG',
-  'milk': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/800px-Milk_glass.jpg',
-  'paneer': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paneer_cubes.jpg/800px-Paneer_cubes.jpg',
-  'butter': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/800px-Supreme_cut_butter.jpg',
-  'bread': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
-  'porotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
-  'parotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
-  'fish': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Salmon_raw.jpg/800px-Salmon_raw.jpg',
-  'rice': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/800px-Uncooked_rice.jpg',
-  'oil': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Olive_oil_from_One_Two_Free.jpg/800px-Olive_oil_from_One_Two_Free.jpg',
-  'ghee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/800px-Supreme_cut_butter.jpg',
-  'tea': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
-  'coffee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
-  'egg': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Egg_white.jpg/800px-Egg_white.jpg',
+  'banana': 'https://images.pexels.com/photos/2872755/pexels-photo-2872755.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'apple': 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'tomato': 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'potato': 'https://images.pexels.com/photos/144248/potatoes-vegetables-market-fresh-144248.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'onion': 'https://images.pexels.com/photos/1435904/pexels-photo-1435904.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'milk': 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'paneer': 'https://images.pexels.com/photos/4109998/pexels-photo-4109998.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'butter': 'https://images.pexels.com/photos/928420/pexels-photo-928420.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'bread': 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'porotta': 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'parotta': 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'fish': 'https://images.pexels.com/photos/3296392/pexels-photo-3296392.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'rice': 'https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'oil': 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=600',
+  'ghee': 'https://images.pexels.com/photos/33783/olive-oil-salad-dressing-cooking-olive.jpg?auto=compress&cs=tinysrgb&w=600',
+  'tea': 'https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'coffee': 'https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'egg': 'https://images.pexels.com/photos/162712/eggs-white-egg-food-protein-162712.jpeg?auto=compress&cs=tinysrgb&w=600',
 
   // Category real photo fallbacks
-  'fruits': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg',
-  'vegetables': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/800px-Tomato_je.jpg',
-  'dairy': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/800px-Milk_glass.jpg',
-  'bakery': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/800px-Kaisersemmel-.jpg',
-  'beverages': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/800px-A_small_cup_of_coffee.JPG',
-  'staples': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/800px-Uncooked_rice.jpg',
-  'default': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg'
+  'fruits': 'https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'vegetables': 'https://images.pexels.com/photos/1458694/pexels-photo-1458694.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'dairy': 'https://images.pexels.com/photos/248412/pexels-photo-248412.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'bakery': 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'beverages': 'https://images.pexels.com/photos/1233319/pexels-photo-1233319.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'staples': 'https://images.pexels.com/photos/4110256/pexels-photo-4110256.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'default': 'https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=600'
 };
+
+const SECONDARY_FALLBACKS = [
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/800px-Red_Apple.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/800px-Banana-Single.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/800px-Milk_glass.jpg'
+];
 
 export const getRealPhotoFallback = (alt = '', categoryName = '') => {
   const text = `${alt} ${categoryName}`.toLowerCase();
@@ -45,24 +51,30 @@ export const ImageWithFallback = ({
   categoryName = '',
   className = ''
 }) => {
-  const realPhoto = getRealPhotoFallback(alt, categoryName);
+  const primaryFallback = getRealPhotoFallback(alt, categoryName);
   const isValidSource = src && typeof src === 'string' && src.trim().startsWith('http') && !src.startsWith('data:');
-  
-  const [imgSrc, setImgSrc] = useState(isValidSource ? src : realPhoto);
+
+  const [currentSrcIndex, setCurrentSrcIndex] = useState(0);
+  const sources = [
+    ...(isValidSource ? [src] : []),
+    primaryFallback,
+    ...SECONDARY_FALLBACKS
+  ];
 
   useEffect(() => {
-    const valid = src && typeof src === 'string' && src.trim().startsWith('http') && !src.startsWith('data:');
-    setImgSrc(valid ? src : realPhoto);
-  }, [src, alt, categoryName, realPhoto]);
+    setCurrentSrcIndex(0);
+  }, [src, alt, categoryName]);
+
+  const activeSrc = sources[Math.min(currentSrcIndex, sources.length - 1)];
 
   return (
     <img
-      src={imgSrc}
+      src={activeSrc}
       alt={alt || 'Grocery item'}
       className={className}
       onError={() => {
-        if (imgSrc !== realPhoto) {
-          setImgSrc(realPhoto);
+        if (currentSrcIndex < sources.length - 1) {
+          setCurrentSrcIndex((prev) => prev + 1);
         }
       }}
       loading="lazy"
