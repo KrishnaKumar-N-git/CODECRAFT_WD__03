@@ -1,4 +1,4 @@
-﻿const Product = require('../models/Product');
+const Product = require('../models/Product');
 const Category = require('../models/Category');
 const { getCategorySvg } = require('./grocerySvgLibrary');
 
@@ -62,7 +62,7 @@ const repairProductImages = async () => {
 
       if (!product.images || product.images.length === 0) {
         product.images = [{
-          url: DEFAULT_PRODUCT_IMAGE,
+          url: getRelevantImage(product.name, categoryName),
           publicId: `fallback_prod_${product._id}`,
           isPrimary: true
         }];
@@ -72,7 +72,7 @@ const repairProductImages = async () => {
           const imgUrl = product.images[i].url || '';
           // Only replace if empty or is an SVG data URI (too long for <img src>)
           if (!imgUrl || imgUrl.startsWith('data:image/svg+xml')) {
-            product.images[i].url = DEFAULT_PRODUCT_IMAGE;
+            product.images[i].url = getRelevantImage(product.name, categoryName);
             needsUpdate = true;
           }
         }
