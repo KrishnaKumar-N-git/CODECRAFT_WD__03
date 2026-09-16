@@ -52,7 +52,7 @@ export const Categories = () => {
                 <img
                   src={(() => {
                     const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-                    return (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder'))
+                    return (rawUrl && typeof rawUrl === 'string' && rawUrl.startsWith('http'))
                       ? rawUrl
                       : getCategorySvg(cat.name);
                   })()}
