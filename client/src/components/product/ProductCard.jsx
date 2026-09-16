@@ -7,16 +7,14 @@ import { useWishlist } from '../../context/WishlistContext';
 
 import { getProductSvg } from '../../utils/grocerySvgLibrary';
 
+import { ImageWithFallback } from '../common/ImageWithFallback';
+
 export const ProductCard = ({ product }) => {
   const { cart, addToCart, updateQty } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const fallbackSvg = getProductSvg(product.name, product.category?.name);
   const getImageUrl = (img) => (typeof img === 'string' ? img : img?.url);
-  const rawImg = getImageUrl(product.images?.find((img) => img?.isPrimary)) || getImageUrl(product.images?.[0]);
-  const primaryImage = (rawImg && typeof rawImg === 'string' && rawImg.startsWith('http'))
-    ? rawImg
-    : fallbackSvg;
+  const primaryImage = getImageUrl(product.images?.find((img) => img?.isPrimary)) || getImageUrl(product.images?.[0]);
   const isWishlisted = isInWishlist(product._id);
 
   const cartItem = cart?.items?.find((item) => item.product?._id === product._id);
@@ -52,16 +50,12 @@ export const ProductCard = ({ product }) => {
 
       {/* Product Image Link */}
       <Link to={`/product/${product.slug || product._id}`} className="block relative mb-3 overflow-hidden rounded-2xl bg-emerald-50/30 aspect-square">
-        <img
+        <ImageWithFallback
           src={primaryImage}
           alt={product.name}
-          referrerPolicy="no-referrer"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = fallbackSvg;
-          }}
+          categoryName={product.category?.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          loading="lazy"
+          iconSize="text-4xl"
         />
 
         {isOutOfStock && (

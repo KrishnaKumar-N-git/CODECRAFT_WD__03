@@ -4,6 +4,7 @@ import productService from '../../services/productService';
 import storeService from '../../services/storeService';
 import ProductGrid from '../../components/product/ProductGrid';
 import { getCategorySvg } from '../../utils/grocerySvgLibrary';
+import { ImageWithFallback } from '../../components/common/ImageWithFallback';
 import {
   ShoppingBag,
   Sparkles,
@@ -174,23 +175,15 @@ export const Home = () => {
               to={`/shop?category=${cat._id}`}
               className="group bg-white p-3.5 rounded-3xl border border-emerald-100 shadow-sm hover:shadow-lg hover:border-emerald-300 transition-all text-center space-y-2"
             >
-              <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 p-1 overflow-hidden group-hover:scale-105 transition-transform">
-                <img
-                  src={(() => {
-                    const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-                    return (rawUrl && typeof rawUrl === 'string' && rawUrl.startsWith('http'))
-                      ? rawUrl
-                      : getCategorySvg(cat.name);
-                  })()}
+              <div className="w-14 h-14 mx-auto rounded-2xl overflow-hidden group-hover:scale-105 transition-transform shadow-sm">
+                <ImageWithFallback
+                  src={typeof cat.image === 'string' ? cat.image : cat.image?.url}
                   alt={cat.name}
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = getCategorySvg(cat.name);
-                  }}
-                  className="w-full h-full object-cover rounded-xl"
+                  categoryName={cat.name}
+                  className="w-full h-full object-cover rounded-2xl"
+                  iconSize="text-2xl"
+                  showLabel={false}
                 />
-
               </div>
               <p className="text-[11px] font-bold text-gray-800 line-clamp-1 group-hover:text-emerald-700">
                 {cat.name}

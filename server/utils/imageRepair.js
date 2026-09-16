@@ -2,29 +2,29 @@ const Product = require('../models/Product');
 const Category = require('../models/Category');
 const { getCategorySvg } = require('./grocerySvgLibrary');
 
-// Reliable Unsplash fallback images per category name keyword
+// Reliable public Wikimedia Commons fallback images per category keyword (100% CORS & adblocker friendly)
 const CATEGORY_FALLBACK_IMAGES = {
-  'fruits': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&auto=format&fit=crop',
-  'vegetables': 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=400&auto=format&fit=crop',
-  'dairy': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&auto=format&fit=crop',
-  'eggs': 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&auto=format&fit=crop',
-  'bakery': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop',
-  'bread': 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop',
-  'beverages': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop',
-  'oil': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop',
-  'ghee': 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop',
-  'rice': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop',
-  'staples': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&auto=format&fit=crop',
-  'baby': 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&auto=format&fit=crop',
-  'frozen': 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&auto=format&fit=crop',
-  'household': 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&auto=format&fit=crop',
-  'cleaning': 'https://images.unsplash.com/photo-1563453392212-326f5e854473?w=400&auto=format&fit=crop',
-  'instant': 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&auto=format&fit=crop',
-  'personal': 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&auto=format&fit=crop',
+  'fruits': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg',
+  'vegetables': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/600px-Tomato_je.jpg',
+  'dairy': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/600px-Milk_glass.jpg',
+  'eggs': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Egg_white.jpg/600px-Egg_white.jpg',
+  'bakery': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'bread': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'beverages': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/600px-A_small_cup_of_coffee.JPG',
+  'oil': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Olive_oil_from_One_Two_Free.jpg/600px-Olive_oil_from_One_Two_Free.jpg',
+  'ghee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/600px-Supreme_cut_butter.jpg',
+  'rice': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/600px-Uncooked_rice.jpg',
+  'staples': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/600px-Uncooked_rice.jpg',
+  'baby': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/600px-Milk_glass.jpg',
+  'frozen': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/600px-Milk_glass.jpg',
+  'household': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paneer_cubes.jpg/600px-Paneer_cubes.jpg',
+  'cleaning': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paneer_cubes.jpg/600px-Paneer_cubes.jpg',
+  'instant': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'personal': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/600px-Milk_glass.jpg',
 };
 
-const DEFAULT_PRODUCT_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&fit=crop';
-const DEFAULT_CATEGORY_IMAGE = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&auto=format&fit=crop';
+const DEFAULT_PRODUCT_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg';
+const DEFAULT_CATEGORY_IMAGE = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg';
 
 const getCategoryFallbackImage = (catName = '') => {
   const lower = catName.toLowerCase();
@@ -44,18 +44,18 @@ const repairProductImages = async () => {
     const categories = await Category.find({});
     let updatedCount = 0;
 
-    // Repair Categories â€” only fix truly empty/missing image URLs
+    // Repair Categories
     for (const cat of categories) {
       const currentUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-      // Only repair if the URL is missing or is a broken SVG data URI
-      if (!currentUrl || currentUrl.startsWith('data:')) {
+      // Repair if empty, SVG data URI or unsplash URL
+      if (!currentUrl || currentUrl.startsWith('data:') || currentUrl.includes('unsplash.com')) {
         const fallbackUrl = getCategoryFallbackImage(cat.name);
         cat.image = { url: fallbackUrl, publicId: `fallback_cat_${cat._id}` };
         await cat.save();
       }
     }
 
-    // Repair Products â€” only fix truly empty/missing/SVG data URI images
+    // Repair Products
     for (const product of products) {
       const categoryName = product.category?.name || '';
       let needsUpdate = false;
@@ -70,8 +70,7 @@ const repairProductImages = async () => {
       } else {
         for (let i = 0; i < product.images.length; i++) {
           const imgUrl = product.images[i].url || '';
-          // Only replace if empty or is an SVG data URI (too long for <img src>)
-          if (!imgUrl || imgUrl.startsWith('data:')) {
+          if (!imgUrl || imgUrl.startsWith('data:') || imgUrl.includes('unsplash.com')) {
             product.images[i].url = getRelevantImage(product.name, categoryName);
             needsUpdate = true;
           }
@@ -84,7 +83,7 @@ const repairProductImages = async () => {
       }
     }
 
-    console.log(`âœ“ Repaired ${updatedCount} products/categories with broken/missing images`);
+    console.log(`✓ Repaired ${updatedCount} products/categories with Wikimedia images`);
     return { success: true, count: updatedCount };
   } catch (error) {
     console.error('Error repairing product images:', error.message);

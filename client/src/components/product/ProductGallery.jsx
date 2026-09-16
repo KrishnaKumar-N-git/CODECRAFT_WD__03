@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
-import { getProductSvg } from '../../utils/grocerySvgLibrary';
+import { ImageWithFallback } from '../common/ImageWithFallback';
 
 export const ProductGallery = ({ images = [], productName = '', categoryName = '' }) => {
-  const fallbackSvg = getProductSvg(productName, categoryName);
   const getImgUrl = (img) => (typeof img === 'string' ? img : img?.url);
   const validImages = images
     .map(getImgUrl)
-    .filter((url) => url && typeof url === 'string' && !url.includes('unsplash.com') && !url.includes('via.placeholder'));
+    .filter((url) => url && typeof url === 'string' && url.startsWith('http'));
 
-  const finalImageList = validImages.length > 0 ? validImages : [fallbackSvg];
+  const finalImageList = validImages.length > 0 ? validImages : [''];
   const [selectedImage, setSelectedImage] = useState(finalImageList[0]);
 
   return (
     <div className="space-y-4">
       {/* Main Image Display */}
       <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 aspect-square flex items-center justify-center relative overflow-hidden group">
-        <img
+        <ImageWithFallback
           src={selectedImage}
-          alt="Product detail"
-          referrerPolicy="no-referrer"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = fallbackSvg;
-          }}
+          alt={productName}
+          categoryName={categoryName}
           className="w-full h-full object-contain max-h-[420px] transition-transform duration-300 group-hover:scale-105"
+          iconSize="text-6xl"
         />
       </div>
 

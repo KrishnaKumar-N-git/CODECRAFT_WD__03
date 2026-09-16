@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, ChevronRight, Clock } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { getProductSvg } from '../../utils/grocerySvgLibrary';
+import { ImageWithFallback } from '../common/ImageWithFallback';
 
 export const OrderCard = ({ order, onCancel }) => {
   const isCancellable = ['PENDING', 'CONFIRMED'].includes(order.orderStatus);
@@ -42,19 +42,15 @@ export const OrderCard = ({ order, onCancel }) => {
       {/* Product Thumbnails Snapshot */}
       <div className="flex items-center space-x-3 overflow-x-auto py-1">
         {order.items?.map((item, idx) => (
-          <div key={idx} className="relative group shrink-0">
-            <img
-              src={(item.image && typeof item.image === 'string' && !item.image.includes('unsplash.com') && !item.image.includes('via.placeholder')) ? item.image : getProductSvg(item.name)}
+          <div key={idx} className="relative group shrink-0 w-14 h-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+            <ImageWithFallback
+              src={item.image}
               alt={item.name}
-              referrerPolicy="no-referrer"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = getProductSvg(item.name);
-              }}
-              className="w-14 h-14 object-cover rounded-xl bg-gray-50 border border-gray-100"
+              className="w-full h-full object-cover"
+              iconSize="text-base"
+              showLabel={false}
             />
-
-            <span className="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+            <span className="absolute -top-1.5 -right-1.5 bg-gray-900 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center z-10">
               {item.quantity}
             </span>
           </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import productService from '../../services/productService';
 import { Grid, ChevronRight } from 'lucide-react';
-import { getCategorySvg } from '../../utils/grocerySvgLibrary';
+import { ImageWithFallback } from '../../components/common/ImageWithFallback';
 
 export const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -48,23 +48,15 @@ export const Categories = () => {
               to={`/shop?category=${cat._id}`}
               className="group bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all text-center space-y-3 flex flex-col justify-between"
             >
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-brand-50 p-2 overflow-hidden group-hover:scale-105 transition-transform">
-                <img
-                  src={(() => {
-                    const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-                    return (rawUrl && typeof rawUrl === 'string' && rawUrl.startsWith('http'))
-                      ? rawUrl
-                      : getCategorySvg(cat.name);
-                  })()}
+              <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden group-hover:scale-105 transition-transform shadow-sm">
+                <ImageWithFallback
+                  src={typeof cat.image === 'string' ? cat.image : cat.image?.url}
                   alt={cat.name}
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = getCategorySvg(cat.name);
-                  }}
-                  className="w-full h-full object-cover rounded-xl"
+                  categoryName={cat.name}
+                  className="w-full h-full object-cover rounded-2xl"
+                  iconSize="text-3xl"
+                  showLabel={false}
                 />
-
               </div>
               <div>
                 <h3 className="text-xs font-black text-gray-900 group-hover:text-brand-600 transition-colors">
