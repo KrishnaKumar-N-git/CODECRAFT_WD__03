@@ -48,7 +48,7 @@ const repairProductImages = async () => {
     for (const cat of categories) {
       const currentUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
       // Only repair if the URL is missing or is a broken SVG data URI
-      if (!currentUrl || currentUrl.startsWith('data:image/svg+xml')) {
+      if (!currentUrl || currentUrl.startsWith('data:')) {
         const fallbackUrl = getCategoryFallbackImage(cat.name);
         cat.image = { url: fallbackUrl, publicId: `fallback_cat_${cat._id}` };
         await cat.save();
@@ -71,7 +71,7 @@ const repairProductImages = async () => {
         for (let i = 0; i < product.images.length; i++) {
           const imgUrl = product.images[i].url || '';
           // Only replace if empty or is an SVG data URI (too long for <img src>)
-          if (!imgUrl || imgUrl.startsWith('data:image/svg+xml')) {
+          if (!imgUrl || imgUrl.startsWith('data:')) {
             product.images[i].url = getRelevantImage(product.name, categoryName);
             needsUpdate = true;
           }
