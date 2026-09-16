@@ -5,11 +5,7 @@
 
 const encodeSvg = (svgString) => {
   const clean = svgString.trim().replace(/\s+/g, ' ');
-  try {
-    return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(clean)))}`;
-  } catch (e) {
-    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(clean)}`;
-  }
+  return `data:image/svg+xml;utf8,${encodeURIComponent(clean)}`;
 };
 
 const createProductCardSvg = (title, categoryName, bg1, bg2, accent, mainShape) => {
