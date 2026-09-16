@@ -99,11 +99,31 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const isObjectId = req.params.id.match(/^[0-9a-fA-F]{24}$/);
-    const query = isObjectId ? { _id: req.params.id } : { slug: req.params.id };
+    let product = null;
 
-    const product = await Product.findOne(query)
-      .populate('category', 'name slug')
-      .populate('store', 'name slug address phone openingTime closingTime deliveryFee');
+    if (isObjectId) {
+      product = await Product.findById(req.params.id)
+        .populate('category', 'name slug')
+        .populate('store', 'name slug address phone openingTime closingTime deliveryFee');
+    }
+
+    if (!product) {
+      product = await Product.findOne({ slug: req.params.id })
+        .populate('category', 'name slug')
+        .populate('store', 'name slug address phone openingTime closingTime deliveryFee');
+    }
+
+    if (!product) {
+      const keyword = req.params.id.split('-')[0];
+      product = await Product.findOne({
+        $or: [
+          { slug: new RegExp(keyword, 'i') },
+          { name: new RegExp(keyword, 'i') }
+        ]
+      })
+        .populate('category', 'name slug')
+        .populate('store', 'name slug address phone openingTime closingTime deliveryFee');
+    }
 
     if (!product) return sendError(res, 404, 'Product not found');
 
