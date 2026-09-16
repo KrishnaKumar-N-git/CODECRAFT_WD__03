@@ -39,12 +39,11 @@ export const ImageWithFallback = ({
   categoryName = '',
   className = ''
 }) => {
-  const [hasError, setHasError] = useState(false);
-  const isValidSource = Boolean(src && typeof src === 'string' && src.trim().startsWith('http') && !src.startsWith('data:'));
+  const isValidSource = Boolean(src && typeof src === 'string' && src.trim().length > 0);
 
   useEffect(() => {
-    setHasError(!isValidSource);
-  }, [src, isValidSource]);
+    setHasError(false);
+  }, [src]);
 
   if (hasError || !isValidSource) {
     const title = alt || categoryName || 'Grocery Item';

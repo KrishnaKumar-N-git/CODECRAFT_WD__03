@@ -81,7 +81,7 @@ export const ProductManagement = () => {
   const openEditModal = (product) => {
     setEditingProduct(product);
     const rawImg = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
-    const cleanImg = (rawImg && typeof rawImg === 'string' && !rawImg.includes('unsplash.com') && !rawImg.includes('via.placeholder')) ? rawImg : '';
+    const cleanImg = (rawImg && typeof rawImg === 'string') ? rawImg : '';
 
     setFormData({
       name: product.name || '',
@@ -103,6 +103,9 @@ export const ProductManagement = () => {
       return;
     }
 
+    const existingImg = typeof editingProduct?.images?.[0] === 'string' ? editingProduct.images[0] : editingProduct?.images?.[0]?.url;
+    const finalImgUrl = formData.imageUrl || existingImg || '';
+
     const payload = {
       name: formData.name,
       brand: formData.brand,
@@ -111,7 +114,7 @@ export const ProductManagement = () => {
       sellingPrice: Number(formData.sellingPrice),
       stock: Number(formData.stock),
       category: formData.category,
-      images: [{ url: formData.imageUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=500', isPrimary: true }]
+      images: finalImgUrl ? [{ url: finalImgUrl, isPrimary: true }] : []
     };
 
     try {
@@ -243,7 +246,7 @@ export const ProductManagement = () => {
                       {(() => {
                         const rawUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
                         const fallbackSvg = getProductSvg(product.name, product.category?.name);
-                        const imgSrc = (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder')) ? rawUrl : fallbackSvg;
+                        const imgSrc = (rawUrl && typeof rawUrl === 'string' && rawUrl.trim().length > 0) ? rawUrl : fallbackSvg;
                         return (
                           <img
                             src={imgSrc}

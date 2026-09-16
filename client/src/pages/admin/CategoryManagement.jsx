@@ -167,7 +167,7 @@ export const CategoryManagement = () => {
                 <img
                   src={(() => {
                     const rawUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-                    return (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder'))
+                    return (rawUrl && typeof rawUrl === 'string' && rawUrl.trim().length > 0)
                       ? rawUrl
                       : getCategorySvg(cat.name);
                   })()}

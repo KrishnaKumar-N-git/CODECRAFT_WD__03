@@ -71,7 +71,7 @@ const repairProductImages = async () => {
     // Repair Categories
     for (const cat of categories) {
       const currentUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-      if (!currentUrl || currentUrl.startsWith('data:') || currentUrl.includes('unsplash.com')) {
+      if (!currentUrl) {
         const fallbackUrl = getCategoryFallbackImage(cat.name);
         cat.image = { url: fallbackUrl, publicId: `fallback_cat_${cat._id}` };
         await cat.save();
@@ -92,10 +92,14 @@ const repairProductImages = async () => {
         needsUpdate = true;
       } else {
         for (let i = 0; i < product.images.length; i++) {
-          const imgUrl = product.images[i].url || '';
-          // Repair if empty, SVG data URI, unsplash URL, or postimg link containing non-grocery photos
-          if (!imgUrl || imgUrl.startsWith('data:') || imgUrl.includes('unsplash.com') || imgUrl.includes('postimg')) {
-            product.images[i].url = getRelevantImage(product.name, categoryName);
+          const imgUrl = product.images[i]?.url || (typeof product.images[i] === 'string' ? product.images[i] : '');
+          // Repair ONLY if empty or missing
+          if (!imgUrl) {
+            product.images[i] = {
+              url: getRelevantImage(product.name, categoryName),
+              publicId: `fallback_prod_${product._id}_${i}`,
+              isPrimary: i === 0
+            };
             needsUpdate = true;
           }
         }

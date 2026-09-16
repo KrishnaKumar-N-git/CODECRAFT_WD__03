@@ -110,7 +110,7 @@ export const StoreProducts = () => {
                         {(() => {
                           const rawUrl = typeof product.images?.[0] === 'string' ? product.images[0] : product.images?.[0]?.url;
                           const fallbackSvg = getProductSvg(product.name, product.category?.name);
-                          const imgSrc = (rawUrl && typeof rawUrl === 'string' && !rawUrl.includes('unsplash.com') && !rawUrl.includes('via.placeholder')) ? rawUrl : fallbackSvg;
+                          const imgSrc = (rawUrl && typeof rawUrl === 'string' && rawUrl.trim().length > 0) ? rawUrl : fallbackSvg;
                           return (
                             <img
                               src={imgSrc}

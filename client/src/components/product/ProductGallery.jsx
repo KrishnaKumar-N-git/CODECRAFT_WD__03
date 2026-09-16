@@ -5,10 +5,17 @@ export const ProductGallery = ({ images = [], productName = '', categoryName = '
   const getImgUrl = (img) => (typeof img === 'string' ? img : img?.url);
   const validImages = images
     .map(getImgUrl)
-    .filter((url) => url && typeof url === 'string' && url.startsWith('http'));
+    .filter((url) => url && typeof url === 'string' && url.trim().length > 0);
 
   const finalImageList = validImages.length > 0 ? validImages : [''];
   const [selectedImage, setSelectedImage] = useState(finalImageList[0]);
+
+  // Keep selected image updated if props change
+  React.useEffect(() => {
+    if (finalImageList.length > 0) {
+      setSelectedImage(finalImageList[0]);
+    }
+  }, [images]);
 
   return (
     <div className="space-y-4">
