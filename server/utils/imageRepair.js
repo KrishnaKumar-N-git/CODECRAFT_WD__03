@@ -1,8 +1,28 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
-const { getCategorySvg } = require('./grocerySvgLibrary');
 
-// Reliable public Wikimedia Commons fallback images per category keyword (100% CORS & adblocker friendly)
+// Item-specific reliable public Wikimedia Commons photos (100% CORS & adblocker friendly)
+const SPECIFIC_PRODUCT_IMAGES = {
+  'banana': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/600px-Banana-Single.jpg',
+  'apple': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg',
+  'tomato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/600px-Tomato_je.jpg',
+  'onion': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Onion_on_White.JPG/600px-Onion_on_White.JPG',
+  'potato': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/600px-Patates.jpg',
+  'milk': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Milk_glass.jpg/600px-Milk_glass.jpg',
+  'butter': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/600px-Supreme_cut_butter.jpg',
+  'paneer': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paneer_cubes.jpg/600px-Paneer_cubes.jpg',
+  'bread': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'porotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'parotta': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Kaisersemmel-.jpg/600px-Kaisersemmel-.jpg',
+  'fish': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Salmon_raw.jpg/600px-Salmon_raw.jpg',
+  'rice': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Uncooked_rice.jpg/600px-Uncooked_rice.jpg',
+  'oil': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Olive_oil_from_One_Two_Free.jpg/600px-Olive_oil_from_One_Two_Free.jpg',
+  'ghee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Supreme_cut_butter.jpg/600px-Supreme_cut_butter.jpg',
+  'tea': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/600px-A_small_cup_of_coffee.JPG',
+  'coffee': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/600px-A_small_cup_of_coffee.JPG',
+  'egg': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Egg_white.jpg/600px-Egg_white.jpg',
+};
+
 const CATEGORY_FALLBACK_IMAGES = {
   'fruits': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg',
   'vegetables': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Tomato_je.jpg/600px-Tomato_je.jpg',
@@ -34,7 +54,11 @@ const getCategoryFallbackImage = (catName = '') => {
   return DEFAULT_CATEGORY_IMAGE;
 };
 
-const getRelevantImage = (productName, categoryName = '') => {
+const getRelevantImage = (productName = '', categoryName = '') => {
+  const nameLower = (productName || '').toLowerCase();
+  for (const [key, url] of Object.entries(SPECIFIC_PRODUCT_IMAGES)) {
+    if (nameLower.includes(key)) return url;
+  }
   return getCategoryFallbackImage(categoryName || productName);
 };
 
@@ -47,7 +71,6 @@ const repairProductImages = async () => {
     // Repair Categories
     for (const cat of categories) {
       const currentUrl = typeof cat.image === 'string' ? cat.image : cat.image?.url;
-      // Repair if empty, SVG data URI or unsplash URL
       if (!currentUrl || currentUrl.startsWith('data:') || currentUrl.includes('unsplash.com')) {
         const fallbackUrl = getCategoryFallbackImage(cat.name);
         cat.image = { url: fallbackUrl, publicId: `fallback_cat_${cat._id}` };
@@ -70,7 +93,8 @@ const repairProductImages = async () => {
       } else {
         for (let i = 0; i < product.images.length; i++) {
           const imgUrl = product.images[i].url || '';
-          if (!imgUrl || imgUrl.startsWith('data:') || imgUrl.includes('unsplash.com')) {
+          // Repair if empty, SVG data URI, unsplash URL, or postimg link containing non-grocery photos
+          if (!imgUrl || imgUrl.startsWith('data:') || imgUrl.includes('unsplash.com') || imgUrl.includes('postimg')) {
             product.images[i].url = getRelevantImage(product.name, categoryName);
             needsUpdate = true;
           }
@@ -83,7 +107,7 @@ const repairProductImages = async () => {
       }
     }
 
-    console.log(`✓ Repaired ${updatedCount} products/categories with Wikimedia images`);
+    console.log(`✓ Repaired ${updatedCount} products/categories with valuable grocery images`);
     return { success: true, count: updatedCount };
   } catch (error) {
     console.error('Error repairing product images:', error.message);
@@ -98,4 +122,3 @@ module.exports = {
   getRelevantImage,
   repairProductImages
 };
-

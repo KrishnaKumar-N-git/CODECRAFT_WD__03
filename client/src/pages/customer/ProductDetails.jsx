@@ -125,7 +125,11 @@ export const ProductDetails = () => {
       {/* Main Product Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white p-6 sm:p-8 rounded-3xl border border-gray-100 shadow-sm">
         {/* Left: Gallery */}
-        <ProductGallery images={product.images} />
+        <ProductGallery
+          images={product.images}
+          productName={product.name}
+          categoryName={typeof product.category === 'object' ? product.category?.name : product.category}
+        />
 
         {/* Right: Info */}
         <div className="space-y-6">

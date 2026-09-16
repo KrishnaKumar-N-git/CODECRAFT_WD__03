@@ -74,7 +74,7 @@ export const Home = () => {
     <div className="space-y-10 pb-12">
       {/* 1. BigBasket Hero Showcase Banner */}
       <section className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-950 rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-2xl border border-emerald-800/40">
-        <div className="max-w-2xl space-y-6 relative z-10">
+        <div className="max-w-3xl space-y-6 relative z-10">
           <div className="inline-flex items-center space-x-2 bg-emerald-700/60 text-emerald-200 border border-emerald-500/40 px-3.5 py-1 rounded-full text-xs font-bold">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>Multi-Vendor Kirana Marketplace</span>
@@ -103,17 +103,6 @@ export const Home = () => {
               Category Catalog
             </Link>
           </div>
-        </div>
-
-        {/* Hero Decorative Banner Image */}
-        <div className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-96 h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10">
-          <ImageWithFallback
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Apple.jpg/600px-Red_Apple.jpg"
-            alt="GrocMart Grocery Essentials"
-            categoryName="Fruits & Vegetables"
-            className="w-full h-full object-cover"
-            iconSize="text-7xl"
-          />
         </div>
       </section>
 
